@@ -1,28 +1,43 @@
-import { Controller, Get, Post, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guard/local.auth.guard';
-import { JwtAuthGuard } from './guard/jwt.auth.guard';
 import { LoginAuthDto } from './dto/login-auth.dto';
-import { ApiBearerAuth, ApiBody, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { LoginResponse } from './response/login-response';
+import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator';
+import { WrongUsernameOrPassword } from './response/errors';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @ApiOperation({ description: 'user login route' })
-  @ApiBody({ type: LoginAuthDto })
+  @ApiOperation({
+    summary: 'User login path',
+    description:
+      'Users can authenticate and access their accounts through this path.',
+  })
+  @ApiBody({
+    type: LoginAuthDto,
+    description:
+      'The object that should be sent to the login address for entry.',
+  })
+  @ApiCreatedResponse({
+    type: LoginResponse,
+    description:
+      'If the username and password are correct, it returns an object of LoginResponse.',
+  })
+  @ApiException(() => new WrongUsernameOrPassword(), {
+    description: 'If the username or password is incorrect.',
+  })
   @UseGuards(LocalAuthGuard)
   @Post('login')
   handleLoginPost(@Req() req) {
     return this.authService.login(req.user);
-  }
-
-  @ApiOperation({ description: 'simple route that test is user authenticated or not' })
-  @ApiBearerAuth('Authorization')
-  @UseGuards(JwtAuthGuard)
-  @Get('protect')
-  handleProtectGet() {
-    return 'Hello World';
   }
 }
