@@ -1,16 +1,20 @@
-import { Controller, Post, UseGuards, Req } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { LocalAuthGuard } from './guard/local.auth.guard';
-import { LoginAuthDto } from './dto/login-auth.dto';
+import { Controller, Post, UseGuards, Req, Body } from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { LoginResponse } from './response/login-response';
+
 import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator';
-import { WrongUsernameOrPassword } from './response/errors';
+
+import { AuthService } from './auth.service';
+import { LocalAuthGuard } from './guard/local.auth.guard';
+import { LoginAuthDto } from './dto/login-auth.dto';
+import { RegisterAuthDto } from './dto/register-auth.dto';
+import { LoginResponse } from './response/login-response';
+import { UserExists, WrongUsernameOrPassword } from './response/errors';
+import { RegisterResponse } from './response/register-response';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -18,7 +22,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @ApiOperation({
-    summary: 'User login path',
+    summary: 'User login',
     description:
       'Users can authenticate and access their accounts through this path.',
   })
@@ -40,4 +44,31 @@ export class AuthController {
   handleLoginPost(@Req() req) {
     return this.authService.login(req.user);
   }
+
+  @ApiOperation({
+    summary: 'User Registration',
+    description: 'Users can register through this path.',
+  })
+  @ApiBody({
+    type: RegisterAuthDto,
+    description: 'Users can register by sending the RegisterAuthDto object.',
+  })
+  @ApiCreatedResponse({
+    type: RegisterResponse,
+    description:
+      'If the username and email do not belong to another user, registration will be successful.',
+  })
+  @ApiException(() => new UserExists('username or email'), {
+    description: 'The username or password belongs to another user.',
+  })
+  @Post('register')
+  handleRegisterPost(@Body() registerAuthDto: RegisterAuthDto) {
+    return this.authService.register(registerAuthDto);
+  }
+
+  // @UseGuards(JwtAuthGuard)
+  // @Get('verify')
+  // handleVerfiyGet(@Req() req) {
+  //   return req.user;
+  // }
 }
