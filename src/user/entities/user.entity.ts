@@ -16,4 +16,7 @@ export class User {
 
   @Column({ default: false })
   emailVerfied: boolean;
+
+  @Column({ default: false })
+  isAdmin: boolean;
 }

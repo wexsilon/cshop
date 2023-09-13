@@ -33,7 +33,12 @@ export class AuthService {
     if (u) {
       if (u.emailVerfied) {
         if (await argon2.verify(u.password, password)) {
-          return { id: u.id, username: u.username, email: u.email };
+          return {
+            id: u.id,
+            username: u.username,
+            email: u.email,
+            isAdmin: u.isAdmin,
+          };
         }
         return null;
       }

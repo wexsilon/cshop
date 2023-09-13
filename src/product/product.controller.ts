@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -6,4 +6,9 @@ import { ApiTags } from '@nestjs/swagger';
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
+
+  @Get(':id')
+  handleProductGet(@Param('id') id: number) {
+    return this.productService.findOneById(id);
+  }
 }

@@ -4,6 +4,7 @@ import { SqliteConnectionOptions } from 'typeorm/driver/sqlite/SqliteConnectionO
 
 import { User } from './user/entities/user.entity';
 import { EmailVerify } from './mail/entities/email.verify.entity';
+import { Product } from './product/entities/product.entity';
 
 export function typeormFactory(
   configService: ConfigService,
@@ -12,6 +13,6 @@ export function typeormFactory(
     type: 'sqlite',
     database: configService.get<string>('DB_NAME'),
     synchronize: true,
-    entities: [User, EmailVerify],
+    entities: [User, EmailVerify, Product],
   };
 }
