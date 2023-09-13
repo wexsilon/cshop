@@ -11,3 +11,11 @@ export class UserExists extends ConflictException {
     super(`Another user with this ${field} already exists.`);
   }
 }
+
+export class EmailNotVerified extends UnauthorizedException {
+  constructor() {
+    super(
+      'Your email is unverified. You need to confirm your email to log in.',
+    );
+  }
+}

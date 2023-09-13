@@ -22,4 +22,8 @@ export class UserService {
       .orWhere('user.username = :username', { username })
       .getOne();
   }
+
+  update(user: User) {
+    return this.userRepository.update(user.id, user);
+  }
 }

@@ -4,13 +4,15 @@ import { UserInfoAuthDto } from './dto/userinfo-auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import argon2 from 'argon2';
 import { RegisterAuthDto } from './dto/register-auth.dto';
-import { UserExists } from './response/errors';
+import { EmailNotVerified, UserExists } from './response/error-response';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   async validateUser(
@@ -22,8 +24,14 @@ export class AuthService {
       usernameOrEmail,
     );
 
-    if (u && (await argon2.verify(u.password, password))) {
-      return { id: u.id, username: u.username, email: u.email };
+    if (u) {
+      if (u.emailVerfied) {
+        if (await argon2.verify(u.password, password)) {
+          return { id: u.id, username: u.username, email: u.email };
+        }
+        return null;
+      }
+      throw new EmailNotVerified();
     }
     return null;
   }
@@ -39,12 +47,23 @@ export class AuthService {
       );
     }
     registerAuthDto.password = await argon2.hash(registerAuthDto.password);
-    //const userCreated =
-    await this.userService.create(registerAuthDto);
+    const userCreated = await this.userService.create(registerAuthDto);
+    this.mailService.sendEmailVerify(userCreated.email);
     return { message: 'new user created' };
   }
 
   async login(user: UserInfoAuthDto) {
     return { access_token: this.jwtService.sign(user) };
+  }
+
+  async verify(token: string) {
+    const emailVerify = await this.mailService.findOneEmailVerify(token);
+    const user = await this.userService.findOneByEmailOrUsername(
+      emailVerify.email,
+      emailVerify.email,
+    );
+    user.emailVerfied = true;
+    await this.userService.update(user);
+    return { message: 'email succssful verified' };
   }
 }

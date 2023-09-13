@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { SqliteConnectionOptions } from 'typeorm/driver/sqlite/SqliteConnectionOptions';
 
 import { User } from './user/entities/user.entity';
+import { EmailVerify } from './mail/entities/email.verify.entity';
 
 export function typeormFactory(
   configService: ConfigService,
@@ -11,6 +12,6 @@ export function typeormFactory(
     type: 'sqlite',
     database: configService.get<string>('DB_NAME'),
     synchronize: true,
-    entities: [User],
+    entities: [User, EmailVerify],
   };
 }
