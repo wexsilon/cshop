@@ -3,11 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Transporter, createTransport } from 'nodemailer';
+import { Repository } from 'typeorm';
+import { randomUUID } from 'crypto';
 
 import util from 'util';
 import { EmailVerify } from './entities/email.verify.entity';
-import { Repository } from 'typeorm';
-import { randomUUID } from 'crypto';
 
 @Injectable()
 export class MailService {
@@ -60,5 +60,4 @@ export class MailService {
   removeEmailVerify(id: number) {
     return this.emailyVerifyRepository.delete(id);
   }
-
 }

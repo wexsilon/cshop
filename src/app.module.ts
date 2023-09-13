@@ -7,6 +7,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeormFactory } from './ormconfig';
 import { MailModule } from './mail/mail.module';
+import { CartModule } from './cart/cart.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { MailModule } from './mail/mail.module';
     AuthModule,
     UserModule,
     MailModule,
+    CartModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],

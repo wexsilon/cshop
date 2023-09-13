@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { UserService } from 'src/user/user.service';
-import { UserInfoAuthDto } from './dto/userinfo-auth.dto';
 import { JwtService } from '@nestjs/jwt';
+
 import argon2 from 'argon2';
+
 import { RegisterAuthDto } from './dto/register-auth.dto';
+import { UserInfoAuthDto } from './dto/userinfo-auth.dto';
+import { MailService } from 'src/mail/mail.service';
+import { UserService } from 'src/user/user.service';
 import {
   EmailNotVerified,
   NotFoundVerifyToken,
   UserExists,
 } from './response/error-response';
-import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
