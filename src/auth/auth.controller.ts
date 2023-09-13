@@ -24,6 +24,7 @@ import { LoginAuthDto } from './dto/login-auth.dto';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import {
   EmailNotVerified,
+  NotFoundVerifyToken,
   UserExists,
   WrongUsernameOrPassword,
 } from './response/error-response';
@@ -89,7 +90,8 @@ export class AuthController {
 
   @ApiOperation({
     summary: 'User Email Verification',
-    description: 'Through this path, you can confirm the email and allow the user to log into their account.',
+    description:
+      'Through this path, you can confirm the email and allow the user to log into their account.',
   })
   @ApiParam({
     type: String,
@@ -100,6 +102,10 @@ export class AuthController {
   @ApiOkResponse({
     type: VerifyResponse,
     description: 'If confirmation is successful, this exit is triggered.',
+  })
+  @ApiException(() => new NotFoundVerifyToken(), {
+    description:
+      'This error is sent when the token does not exist in the database.',
   })
   @Get('verify/:token')
   handleVerfiyGet(@Param('token') token: string) {

@@ -1,4 +1,8 @@
-import { UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  UnauthorizedException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 
 export class WrongUsernameOrPassword extends UnauthorizedException {
   constructor() {
@@ -17,5 +21,11 @@ export class EmailNotVerified extends UnauthorizedException {
     super(
       'Your email is unverified. You need to confirm your email to log in.',
     );
+  }
+}
+
+export class NotFoundVerifyToken extends NotFoundException {
+  constructor() {
+    super('Your token does not exist or is incorrect.');
   }
 }

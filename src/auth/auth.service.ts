@@ -4,7 +4,11 @@ import { UserInfoAuthDto } from './dto/userinfo-auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import argon2 from 'argon2';
 import { RegisterAuthDto } from './dto/register-auth.dto';
-import { EmailNotVerified, UserExists } from './response/error-response';
+import {
+  EmailNotVerified,
+  NotFoundVerifyToken,
+  UserExists,
+} from './response/error-response';
 import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
@@ -58,12 +62,15 @@ export class AuthService {
 
   async verify(token: string) {
     const emailVerify = await this.mailService.findOneEmailVerify(token);
-    const user = await this.userService.findOneByEmailOrUsername(
-      emailVerify.email,
-      emailVerify.email,
-    );
-    user.emailVerfied = true;
-    await this.userService.update(user);
-    return { message: 'email succssful verified' };
+    if (emailVerify) {
+      const user = await this.userService.findOneByEmailOrUsername(
+        emailVerify.email,
+        emailVerify.email,
+      );
+      user.emailVerfied = true;
+      await this.userService.update(user);
+      return { message: 'email succssful verified' };
+    }
+    throw new NotFoundVerifyToken();
   }
 }

@@ -20,7 +20,8 @@ export class LoginResponse {
 
 export class VerifyResponse {
   @ApiProperty({
-    description: 'If email confirmation is successful, this message will be sent.',
+    description:
+      'If email confirmation is successful, this message will be sent.',
     example: 'email succssful verified',
   })
   message: string;
