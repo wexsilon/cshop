@@ -69,6 +69,7 @@ export class AuthService {
       );
       user.emailVerfied = true;
       await this.userService.update(user);
+      this.mailService.removeEmailVerify(emailVerify.id);
       return { message: 'email succssful verified' };
     }
     throw new NotFoundVerifyToken();

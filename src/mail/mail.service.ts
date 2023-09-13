@@ -56,4 +56,9 @@ export class MailService {
   findOneEmailVerify(token: string) {
     return this.emailyVerifyRepository.findOneBy({ token });
   }
+
+  removeEmailVerify(id: number) {
+    return this.emailyVerifyRepository.delete(id);
+  }
+
 }
