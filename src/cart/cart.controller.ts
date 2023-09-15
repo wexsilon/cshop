@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CartService } from './cart.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
@@ -10,6 +19,11 @@ import { ItemDto } from './dtos/item.dto';
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
+
+  @Get()
+  getCart(@Req() req) {
+    return this.cartService.getCart(req.user.id);
+  }
 
   @Post()
   addItemToCart(@Req() req, @Body() itemDto: ItemDto) {
@@ -25,5 +39,4 @@ export class CartController {
   deleteCart(@Req() req) {
     return this.cartService.deleteCart(req.user.id);
   }
-
 }

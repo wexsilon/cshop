@@ -5,14 +5,16 @@ import {
   Delete,
   Patch,
   Param,
+  Body,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { IsAdminGuard } from '../guards/is.admin.guard';
 import { AdminService } from '../admin.service';
 import { UpdateProductDto } from 'src/product/dtos/update-product.dto';
 import { CreateProductDto } from 'src/product/dtos/create-product.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+
 import { ProductService } from 'src/product/product.service';
 
 @ApiTags('admin')
@@ -23,7 +25,7 @@ export class AdminProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  createProduct(createProductDto: CreateProductDto) {
+  createProduct(@Body() createProductDto: CreateProductDto) {
     return this.productService.create(createProductDto);
   }
 
@@ -37,10 +39,9 @@ export class AdminProductController {
   @Patch(':id')
   async updateProduct(
     @Param('id') id: number,
-    updateProductDto: UpdateProductDto,
+    @Body() updateProductDto: UpdateProductDto,
   ) {
-    const beforeUpdate = await this.productService.findOneById(id);
     await this.productService.update(id, updateProductDto);
-    return beforeUpdate;
+    return this.productService.findOneById(id);
   }
 }

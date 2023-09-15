@@ -9,7 +9,7 @@ export class ProductController {
 
   @Get()
   getAllProduct() {
-    this.productService.findAll();
+    return this.productService.findAll();
   }
 
   @Get(':id')
