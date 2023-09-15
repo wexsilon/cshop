@@ -1,7 +1,7 @@
 import { Controller, Delete, Patch, Post, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { JwtAuthGuard } from 'src/auth/guard/jwt.auth.guard';
-import { IsAdminGuard } from './guard/is.admin.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
+import { IsAdminGuard } from './guards/is.admin.guard';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('admin')

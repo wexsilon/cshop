@@ -1,6 +1,6 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { UserInfoAuthDto } from '../dto/userinfo-auth.dto';
+import { UserInfoAuthDto } from '../dtos/userinfo-auth.dto';
 import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 

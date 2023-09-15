@@ -7,8 +7,13 @@ import { ApiTags } from '@nestjs/swagger';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @Get()
+  getAllProduct() {
+    this.productService.findAll();
+  }
+
   @Get(':id')
-  handleProductGet(@Param('id') id: number) {
+  getSingleProduct(@Param('id') id: number) {
     return this.productService.findOneById(id);
   }
 }

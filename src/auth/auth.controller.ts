@@ -19,20 +19,20 @@ import {
 import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator';
 
 import { AuthService } from './auth.service';
-import { LocalAuthGuard } from './guard/local.auth.guard';
-import { LoginAuthDto } from './dto/login-auth.dto';
-import { RegisterAuthDto } from './dto/register-auth.dto';
+import { LocalAuthGuard } from './guards/local.auth.guard';
+import { LoginAuthDto } from './dtos/login-auth.dto';
+import { RegisterAuthDto } from './dtos/register-auth.dto';
 import {
   EmailNotVerified,
   NotFoundVerifyToken,
   UserExists,
   WrongUsernameOrPassword,
-} from './response/error-response';
+} from './responses/error-response';
 import {
   LoginResponse,
   RegisterResponse,
   VerifyResponse,
-} from './response/succssful-response';
+} from './responses/succssful-response';
 
 @ApiTags('auth')
 @Controller('auth')

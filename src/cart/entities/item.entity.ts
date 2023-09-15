@@ -1,19 +1,22 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
-export class Product {
+export class Item {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  productId: number;
 
   @Column()
   name: string;
 
   @Column()
-  description: string;
-
-  @Column()
-  count: number;
+  quantity: number;
 
   @Column()
   price: number;
+
+  @Column()
+  subTotalPrice: number;
 }
