@@ -5,27 +5,34 @@ import { Repository } from 'typeorm';
 
 import { Cart } from './entities/cart.entity';
 import { Item } from './entities/item.entity';
-import { ItemDto } from './dtos/item.dto';
+import { CreateItemDto } from './dtos/create-item.dto';
+import { ProductService } from 'src/product/product.service';
+import { Product } from 'src/product/entities/product.entity';
+import { ProductNotExistCart, QuantityProductUnavailable } from './responses/error-response';
+import { UpdateItemDto } from './dtos/update-item.dto';
 
 @Injectable()
 export class CartService {
   constructor(
     @InjectRepository(Cart) private readonly cartRepository: Repository<Cart>,
     @InjectRepository(Item) private readonly itemRepository: Repository<Item>,
+    private readonly productService: ProductService,
   ) {}
 
   async createCart(
     userId: number,
-    itemDto: ItemDto,
+    product: Product,
+    quantity: number,
     subTotalPrice: number,
-    totalPrice: number,
   ) {
     const newItem = await this.itemRepository.save({
-      ...itemDto,
-      subTotalPrice,
+      name: product.name,
+      price: product.price,
+      productId: product.id,
+      quantity,
+      subTotalPrice: subTotalPrice,
     });
     const newCart = this.cartRepository.create({
-      totalPrice,
       userId,
       items: [newItem],
     });
@@ -45,7 +52,9 @@ export class CartService {
   }
 
   async deleteCart(userId: number) {
-    return this.cartRepository.delete({ userId });
+    const cart = await this.getCart(userId);
+    await this.cartRepository.delete({ userId });
+    return cart;
   }
 
   private recalculateCart(cart: Cart) {
@@ -55,9 +64,15 @@ export class CartService {
     });
   }
 
-  async addItemToCart(userId: number, itemDto: ItemDto): Promise<Cart> {
-    const { productId, quantity, price } = itemDto;
-    const subTotalPrice = quantity * price;
+  async addItemToCart(userId: number, itemDto: CreateItemDto) {
+    const { productId, quantity } = itemDto;
+    const product = await this.productService.findOneById(productId);
+
+    if (product.count < quantity) {
+      throw new QuantityProductUnavailable(product.count);
+    }
+
+    const subTotalPrice = quantity * product.price;
 
     const cart = await this.getCart(userId);
 
@@ -77,6 +92,8 @@ export class CartService {
         const newItem = await this.itemRepository.save({
           ...itemDto,
           subTotalPrice,
+          name: product.name,
+          price: product.price,
         });
         cart.items.push(newItem);
         this.recalculateCart(cart);
@@ -85,13 +102,14 @@ export class CartService {
     } else {
       const newCart = await this.createCart(
         userId,
-        itemDto,
+        product,
+        quantity,
         subTotalPrice,
-        price,
       );
       return newCart;
     }
   }
+
 
   async removeItemFromCart(userId: number, productId: number) {
     const cart = await this.getCart(userId);
@@ -102,8 +120,22 @@ export class CartService {
 
     if (itemIndex > -1) {
       cart.items.splice(itemIndex, 1);
-      if (cart.items.length > 0) return this.cartRepository.save(cart);
-      else return this.deleteCart(userId);
+      if (cart.items.length > 0) this.cartRepository.save(cart);
+      else this.cartRepository.remove(cart);
+      return this.getCart(userId);
+    } else {
+      throw new ProductNotExistCart();
+    }
+  }
+
+  async updateItem(
+    userId: number,
+    itemId: number, updateItemDto: UpdateItemDto) {
+    const item = await this.itemRepository.findOneBy({ id: itemId });
+    if (item) {
+      item.quantity = updateItemDto.quantity;
+      this.itemRepository.save(item);
+      return this.getCart(userId);
     }
   }
 }

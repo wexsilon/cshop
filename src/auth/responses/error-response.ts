@@ -29,3 +29,9 @@ export class NotFoundVerifyToken extends NotFoundException {
     super('Your token does not exist or is incorrect.');
   }
 }
+
+export class UnauthenticatedUser extends UnauthorizedException {
+  constructor() {
+    super('You are not authenticated. Please log in to your account first.');
+  }
+}

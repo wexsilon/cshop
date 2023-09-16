@@ -4,6 +4,7 @@ import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
 import { CreateProductDto } from './dtos/create-product.dto';
 import { UpdateProductDto } from './dtos/update-product.dto';
+import { NotFoundProduct, UniqueProductName } from './responses/error-response';
 
 @Injectable()
 export class ProductService {
@@ -12,25 +13,36 @@ export class ProductService {
     private readonly productRepository: Repository<Product>,
   ) {}
 
-  findOneById(id: number) {
-    return this.productRepository.findOneBy({ id });
+  async findOneById(id: number) {
+    const product = await this.productRepository.findOneBy({ id });
+    if (product) return product;
+    throw new NotFoundProduct();
   }
 
   findAll() {
     return this.productRepository.find({});
   }
 
-  create(createProductDto: CreateProductDto) {
-    return this.productRepository.save(
-      this.productRepository.create(createProductDto),
-    );
+  async create(createProductDto: CreateProductDto): Promise<Product> {
+    try {
+      return await this.productRepository.save(createProductDto);
+    } catch (e) {
+      throw new UniqueProductName();
+    }
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return this.productRepository.update(id, updateProductDto);
+  async update(id: number, updateProductDto: UpdateProductDto) {
+    try {
+      await this.productRepository.update(id, updateProductDto);
+    } catch (e) {
+      throw new UniqueProductName();
+    }
+    return this.findOneById(id);
   }
 
-  delete(id: number) {
-    return this.productRepository.delete(id);
+  async delete(id: number) {
+    const deletedProduct = await this.findOneById(id);
+    this.productRepository.delete(id);
+    return deletedProduct;
   }
 }
