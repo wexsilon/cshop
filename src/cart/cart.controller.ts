@@ -19,15 +19,19 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
-import { CreateItemDto } from './dtos/create-item.dto';
-import { Cart } from './entities/cart.entity';
+
 import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator';
+
+import { CreateItemDto } from './dtos/create-item.dto';
+import { UpdateItemDto } from './dtos/update-item.dto';
+import { Cart } from './entities/cart.entity';
+import {
+  ProductNotExistCart,
+  QuantityProductUnavailable,
+} from './responses/error-response';
 import { UnauthenticatedUser } from 'src/auth/responses/error-response';
 import { NotFoundProduct } from 'src/product/responses/error-response';
-import { ProductNotExistCart, QuantityProductUnavailable } from './responses/error-response';
-import { UpdateProductDto } from 'src/product/dtos/update-product.dto';
-import { UpdateItemDto } from './dtos/update-item.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 
 @ApiTags('cart')
 @ApiBearerAuth()
@@ -61,11 +65,13 @@ export class CartController {
   })
   @ApiBody({
     type: CreateItemDto,
-    description: 'To add a product to the shopping cart, you need to send an object of the CreateItemDto class.',
+    description:
+      'To add a product to the shopping cart, you need to send an object of the CreateItemDto class.',
   })
   @ApiCreatedResponse({
     type: Cart,
-    description: 'If the product is successfully added to the shopping cart, an object of the Cart class is returned.',
+    description:
+      'If the product is successfully added to the shopping cart, an object of the Cart class is returned.',
   })
   @ApiException(() => new UnauthenticatedUser(), {
     description: 'If the user is not authenticated, this error is returned.',
@@ -85,23 +91,27 @@ export class CartController {
 
   @ApiOperation({
     summary: 'Removing a product from the shopping cart.',
-    description: 'You can delete a saved product in the shopping cart using this path.'
+    description:
+      'You can delete a saved product in the shopping cart using this path.',
   })
   @ApiParam({
     type: Number,
     name: 'productId',
-    description: 'The ID of the product you want to remove from the shopping cart.',
+    description:
+      'The ID of the product you want to remove from the shopping cart.',
     example: 1,
   })
   @ApiOkResponse({
     type: Cart,
-    description: 'If the product is successfully removed from the shopping cart, it returns the information of the updated shopping cart.'
+    description:
+      'If the product is successfully removed from the shopping cart, it returns the information of the updated shopping cart.',
   })
   @ApiException(() => new UnauthenticatedUser(), {
     description: 'If the user is not authenticated, this error is returned.',
   })
   @ApiException(() => new ProductNotExistCart(), {
-    description: 'If you try to delete a product that is not in your shopping cart, an error will be returned.'
+    description:
+      'If you try to delete a product that is not in your shopping cart, an error will be returned.',
   })
   @Delete('item/:productId')
   removeItemFromCart(@Req() req, @Param('productId') productId: number) {
@@ -110,21 +120,24 @@ export class CartController {
 
   @ApiOperation({
     summary: 'Changing the quantity of the product.',
-    description: 'You can change the quantity of the product using this path.'
+    description: 'You can change the quantity of the product using this path.',
   })
   @ApiParam({
     type: Number,
     name: 'itemId',
-    description: 'The ID of the item you want to change the quantity of the product for.',
+    description:
+      'The ID of the item you want to change the quantity of the product for.',
     example: 1,
   })
   @ApiBody({
     type: UpdateItemDto,
-    description: 'By sending an object of the UpdateItemDto class, you can change the quantity of the product.',
+    description:
+      'By sending an object of the UpdateItemDto class, you can change the quantity of the product.',
   })
   @ApiOkResponse({
-    description: 'If the change in the quantity of the product is successful, it sends the updated shopping cart as output.',
-    type: Cart
+    description:
+      'If the change in the quantity of the product is successful, it sends the updated shopping cart as output.',
+    type: Cart,
   })
   @ApiException(() => new UnauthenticatedUser(), {
     description: 'If the user is not authenticated, this error is returned.',
@@ -144,7 +157,8 @@ export class CartController {
   })
   @ApiOkResponse({
     type: Cart,
-    description: 'If the shopping cart is successfully deleted, it returns the deleted shopping cart.'
+    description:
+      'If the shopping cart is successfully deleted, it returns the deleted shopping cart.',
   })
   @ApiException(() => new UnauthenticatedUser(), {
     description: 'If the user is not authenticated, this error is returned.',

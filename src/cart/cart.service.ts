@@ -8,7 +8,10 @@ import { Item } from './entities/item.entity';
 import { CreateItemDto } from './dtos/create-item.dto';
 import { ProductService } from 'src/product/product.service';
 import { Product } from 'src/product/entities/product.entity';
-import { ProductNotExistCart, QuantityProductUnavailable } from './responses/error-response';
+import {
+  ProductNotExistCart,
+  QuantityProductUnavailable,
+} from './responses/error-response';
 import { UpdateItemDto } from './dtos/update-item.dto';
 
 @Injectable()
@@ -110,7 +113,6 @@ export class CartService {
     }
   }
 
-
   async removeItemFromCart(userId: number, productId: number) {
     const cart = await this.getCart(userId);
 
@@ -130,7 +132,9 @@ export class CartService {
 
   async updateItem(
     userId: number,
-    itemId: number, updateItemDto: UpdateItemDto) {
+    itemId: number,
+    updateItemDto: UpdateItemDto,
+  ) {
     const item = await this.itemRepository.findOneBy({ id: itemId });
     if (item) {
       item.quantity = updateItemDto.quantity;

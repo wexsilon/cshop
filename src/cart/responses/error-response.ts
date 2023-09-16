@@ -1,5 +1,4 @@
 import { NotAcceptableException, NotFoundException } from '@nestjs/common';
-import { NotFoundError } from 'rxjs';
 
 export class QuantityProductUnavailable extends NotAcceptableException {
   constructor(count: number) {
@@ -8,7 +7,6 @@ export class QuantityProductUnavailable extends NotAcceptableException {
     );
   }
 }
-
 
 export class ProductNotExistCart extends NotFoundException {
   constructor() {
