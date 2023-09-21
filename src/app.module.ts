@@ -12,8 +12,8 @@ import { CartModule } from './cart/cart.module';
 import { ProductModule } from './product/product.module';
 import { AdminModule } from './admin/admin.module';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+// import { AppController } from './app.controller';
+// import { AppService } from './app.service';
 import { typeormFactory } from './ormconfig';
 
 @Module({
@@ -34,7 +34,7 @@ import { typeormFactory } from './ormconfig';
     ProductModule,
     AdminModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  //   controllers: [AppController],
+  //   providers: [AppService],
 })
 export class AppModule {}

@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { ProductService } from './product.service';
 import {
   ApiOkResponse,
@@ -51,7 +51,7 @@ export class ProductController {
       'If a product with this ID is not found, this error will be returned.',
   })
   @Get(':id')
-  getSingleProduct(@Param('id') id: number) {
+  getSingleProduct(@Param('id', ParseIntPipe) id: number) {
     return this.productService.findOneById(id);
   }
 }

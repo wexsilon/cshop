@@ -6,6 +6,7 @@ import {
   Body,
   Get,
   Param,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -108,7 +109,7 @@ export class AuthController {
       'This error is sent when the token does not exist in the database.',
   })
   @Get('verify/:token')
-  handleVerfiyGet(@Param('token') token: string) {
+  handleVerfiyGet(@Param('token', ParseUUIDPipe) token: string) {
     return this.authService.verify(token);
   }
 }

@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Req,
@@ -114,7 +115,10 @@ export class CartController {
       'If you try to delete a product that is not in your shopping cart, an error will be returned.',
   })
   @Delete('item/:productId')
-  removeItemFromCart(@Req() req, @Param('productId') productId: number) {
+  removeItemFromCart(
+    @Req() req,
+    @Param('productId', ParseIntPipe) productId: number,
+  ) {
     return this.cartService.removeItemFromCart(req.user.id, productId);
   }
 
@@ -145,7 +149,7 @@ export class CartController {
   @Patch('item/:itemId')
   modifyItemFromCart(
     @Req() req,
-    @Param('itemId') itemId: number,
+    @Param('itemId', ParseIntPipe) itemId: number,
     @Body() updateItemDto: UpdateItemDto,
   ) {
     return this.cartService.updateItem(req.user.id, itemId, updateItemDto);

@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Body,
+  ParseIntPipe,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -94,7 +95,7 @@ export class AdminProductController {
       'If a product with this ID is not found, this error will be returned.',
   })
   @Delete(':id')
-  async deleteProduct(@Param('id') id: number) {
+  async deleteProduct(@Param('id', ParseIntPipe) id: number) {
     return this.productService.delete(id);
   }
 
@@ -133,7 +134,7 @@ export class AdminProductController {
   })
   @Patch(':id')
   async updateProduct(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateProductDto: UpdateProductDto,
   ) {
     return this.productService.update(id, updateProductDto);
